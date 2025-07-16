@@ -1,0 +1,49 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Quiz Questions</h2>
+
+    <form method="POST" action="{% url 'result' %}">
+        {% csrf_token %}
+        {% for q in questions %}
+            <div class="question">
+                <p>{{ q.question_text }}</p>
+                <input type="radio" name="{{ q.id }}" value="1"> {{ q.option1 }}<br>
+                <input type="radio" name="{{ q.id }}" value="2"> {{ q.option2 }}<br>
+                <input type="radio" name="{{ q.id }}" value="3"> {{ q.option3 }}<br>
+                <input type="radio" name="{{ q.id }}" value="4"> {{ q.option4 }}<br>
+            </div>
+        {% endfor %}
+
+        <button type="submit">Submit Quiz</button>
+    </form>
+
+    <!-- Simple Timer -->
+    <p id="timer">Time Left: <span id="time">60</span> seconds</p>
+
+</div>
+
+<script>
+    let timeLeft = 60;
+    let timer = setInterval(function(){
+        if(timeLeft <= 0){
+            clearInterval(timer);
+            alert("Time is up! Submitting quiz...");
+            document.forms[0].submit();
+        } else {
+            document.getElementById("time").innerHTML = timeLeft;
+        }
+        timeLeft -= 1;
+    }, 1000);
+</script>
+
+<div class="container">
+    <h2>Quiz Result</h2>
+    <p>Your Score: {{ score }} out of {{ total }}</p>
+    <p>Percentage: {{ percentage }}%</p>
+    <a href="{% url 'home' %}"><button>Go to Home</button></a>
+</div>
+
+{% endblock %}
+
